@@ -24,7 +24,7 @@
 
     <groupId>de.akquinet.innovation.play2</groupId>
     <artifactId>play2-maven-plugin</artifactId>
-    <version>1.2.2-SNAPSHOT</version>
+    <version>1.2.3-SNAPSHOT</version>
     <packaging>maven-plugin</packaging>
     <name>play2-maven-plugin</name>
 
@@ -36,6 +36,13 @@
         <system>GitHub</system>
         <url>https://github.com/cescoffier/maven-play2-plugin/issues</url>
     </issueManagement>
+
+    <repositories>
+        <repository>
+            <id>typesafe</id>
+            <url>http://repo.typesafe.com/typesafe/releases</url>
+        </repository>
+    </repositories>
 
     <mailingLists>
         <mailingList>
@@ -94,7 +101,7 @@
                 <github>samspycher</github>
             </properties>
         </contributor>
-        
+
         <contributor>
             <name>Shane Witbeck</name>
             <email />
@@ -109,9 +116,8 @@
     <properties>
         <mavenVersion>2.2.1</mavenVersion>
         <project.url>http://cescoffier.github.com/maven-play2-plugin/maven/${project.version}</project.url>
-        <!-- empty by default, can be set using system props (-Dplay2.home=...)-->
-        <play2.home />
-	    <site.path>maven/snapshot</site.path>
+        <site.path>maven/snapshot</site.path>
+        <scala.version>2.9.2</scala.version>
     </properties>
 
     <prerequisites>
@@ -120,6 +126,19 @@
 
 
     <dependencies>
+        <!--
+        <dependency>
+           <groupId>com.typesafe.zinc</groupId>
+           <artifactId>zinc</artifactId>
+           <version>0.1.1</version>
+        </dependency>
+
+
+        <dependency>
+           <groupId>net.alchim31.maven</groupId>
+           <artifactId>scala-maven-plugin</artifactId>
+           <version>3.1.0</version>
+        </dependency>-->
         <dependency>
             <groupId>org.apache.maven</groupId>
             <artifactId>maven-artifact</artifactId>
@@ -221,6 +240,74 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- Core -->
+        <dependency>
+            <groupId>com.github.scala-incubator.io</groupId>
+            <artifactId>scala-io-core_${scala.version}</artifactId>
+            <version>0.4.1</version>
+        </dependency>
+
+        <!-- File -->
+        <dependency>
+            <groupId>com.github.scala-incubator.io</groupId>
+            <artifactId>scala-io-file_${scala.version}</artifactId>
+            <version>0.4.1</version>
+        </dependency>
+
+        <!--
+        <dependency>
+           <groupId>play</groupId>
+           <artifactId>play_2.10</artifactId>
+           <version>2.1-RC1</version>
+           <scope>compile</scope>
+        </dependency>-->
+        <dependency>
+            <groupId>play</groupId>
+            <artifactId>routes-compiler_${scala.version}</artifactId>
+            <version>2.1-RC1</version>
+        </dependency>
+        <dependency>
+            <groupId>play</groupId>
+            <artifactId>templates-compiler_${scala.version}</artifactId>
+            <version>2.1-RC1</version>
+        </dependency>
+
+        <!--
+        <dependency>
+           <groupId>play</groupId>
+           <artifactId>play-test_2.10</artifactId>
+           <version>2.1-RC1</version>
+           <scope>compile</scope>
+        </dependency>-->
+
+
+        <!-- Scala -->
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-library</artifactId>
+            <version>${scala.version}</version>
+            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.scala-lang</groupId>
+            <artifactId>scala-compiler</artifactId>
+            <version>${scala.version}</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <!--
+        <dependency>
+           <groupId>org.scala-lang</groupId>
+           <artifactId>scala-reflect</artifactId>
+           <version>${scala.version}</version>
+           <scope>compile</scope>
+        </dependency>
+        <dependency>
+           <groupId>org.scala-lang</groupId>
+           <artifactId>scala-actors</artifactId>
+           <version>${scala.version}</version>
+           <scope>compile</scope>
+        </dependency>-->
     </dependencies>
 
     <build>
@@ -275,7 +362,7 @@
                                 <linkXRef>true</linkXRef>
                                 <sourceEncoding>${project.build.sourceEncoding}</sourceEncoding>
                                 <minimumTokens>100</minimumTokens>
-                                <targetJdk>1.5</targetJdk>
+                                <targetJdk>1.6</targetJdk>
                             </configuration>
                         </plugin>
                         <plugin>
@@ -319,14 +406,16 @@
                 </dependencies>
             </plugin>
 
+            <!--
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>2.4</version>
                 <configuration>
-                    <source>1.5</source>
-                    <target>1.5</target>
+                    <source>1.6</source>
+                    <target>1.6</target>
                 </configuration>
             </plugin>
+
 
             <plugin>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -335,11 +424,33 @@
                     <systemProperties>
                         <property>
                             <name>PLAY2_HOME</name>
-                            <!-- pass in system property to surefire -->
                             <value>${play2.home}</value>
                         </property>
                     </systemProperties>
                 </configuration>
+            </plugin>-->
+
+            <plugin>
+                <groupId>net.alchim31.maven</groupId>
+                <artifactId>scala-maven-plugin</artifactId>
+                <version>3.1.0</version>
+                <executions>
+                    <execution>
+                        <id>scala-compile-first</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                            <goal>compile</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>scala-test-compile</id>
+                        <phase>process-test-resources</phase>
+                        <goals>
+                            <goal>testCompile</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
 
             <plugin>
@@ -411,6 +522,47 @@
 
 
     <profiles>
+
+        <profile>
+            <id>integration-tests</id>
+            <activation>
+                <property>
+                    <name>maven.test.skip</name>
+                    <value>!true</value>
+                </property>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <artifactId>maven-invoker-plugin</artifactId>
+                        <version>1.5</version>
+                        <configuration>
+                            <settingsFile>src/it/settings.xml</settingsFile>
+                            <cloneProjectsTo>${project.build.directory}/it</cloneProjectsTo>
+                            <debug>false</debug>
+                            <streamLogs>true</streamLogs>
+                            <projectsDirectory>src/it</projectsDirectory>
+                            <pomIncludes>
+                                <pomInclude>**/pom.xml</pomInclude>
+                            </pomIncludes>
+                            <preBuildHookScript>setup.groovy</preBuildHookScript>
+                            <!--<postBuildHookScript>validate.groovy</postBuildHookScript>-->
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>integration-test</id>
+                                <goals>
+                                    <goal>install</goal>
+                                    <goal>run</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+
         <profile>
             <!--  When enabled, this profile override the Sonatype distribution management   -->
             <id>ats.nexus</id>
@@ -435,7 +587,7 @@
             <id>release</id>
 			<properties>
 				<site.path>maven/release</site.path>
-			</properties>	
+			</properties>
             <build>
                 <plugins>
                     <plugin>
